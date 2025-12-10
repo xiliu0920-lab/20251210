@@ -9,6 +9,7 @@
         @createNote="onCreateNote"
         @openAi="showAiModal = true"
         @openSettings="showSettings = true"
+        @openSchedule="showSchedule = true"
         @selectFolder="onSelectFolder"
         @renameFolder="onRenameFolder"
         @toggleVisibility="onToggleVisibility"

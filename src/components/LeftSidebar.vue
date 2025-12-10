@@ -19,6 +19,12 @@
           <span class="new-label">新建笔记本</span>
         </button>
       </div>
+      <div class="primary">
+        <button class="new-btn" @click="$emit('openSchedule')">
+          <span class="new-icon">📅</span>
+          <span class="new-label">时间表</span>
+        </button>
+      </div>
     </div>
   </div>
   
