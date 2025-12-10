@@ -1,5 +1,6 @@
 const LS_TREE = 'notebookTree'
 const LS_API = 'userApiKey'
+const LS_SCHEDULES = 'userSchedules'
 
 const now = () => new Date().toISOString()
 const genId = () => 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36)
@@ -106,4 +107,32 @@ export function deleteNode(data, id) {
     return false
   }
   return remove(data.notebookTree)
+}
+
+// Schedules
+export function loadSchedules() {
+  try {
+    const raw = localStorage.getItem(LS_SCHEDULES)
+    const list = raw ? JSON.parse(raw) : []
+    return Array.isArray(list) ? list : []
+  } catch (e) {
+    return []
+  }
+}
+
+export function saveSchedules(list) {
+  try {
+    localStorage.setItem(LS_SCHEDULES, JSON.stringify(list || []))
+  } catch (e) {}
+}
+
+export function addScheduleItem(title, datetime) {
+  const now = new Date().toISOString()
+  const id = 'sched-' + Math.random().toString(36).slice(2) + Date.now().toString(36)
+  return { id, title: title || '未命名', datetime: datetime || now, createdAt: now }
+}
+
+export function deleteScheduleItem(list, id) {
+  const idx = list.findIndex(x => x.id === id)
+  if (idx >= 0) list.splice(idx, 1)
 }

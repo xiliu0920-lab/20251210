@@ -34,8 +34,10 @@
     </section>
     <AiModal v-if="showAiModal" @close="showAiModal = false" :allNotes="allNotes" @createNote="addNoteFromAi" />
     <SettingsModal v-if="showSettings" @close="showSettings = false" :apiKey="apiKey" @saveApiKey="onSaveApiKey" />
+    <ScheduleModal v-if="showSchedule" :schedules="schedules" @close="showSchedule=false" @add="onAddSchedule" @delete="onDeleteSchedule" />
     <DraggableFloat icon="🤖" storageKey="float_ai" :defaultX="600" :defaultY="80" @click="showAiModal = true" />
     <DraggableFloat icon="⚙️" storageKey="float_settings" :defaultX="660" :defaultY="140" @click="showSettings = true" />
+    <DraggableFloat icon="📅" storageKey="float_schedule" :defaultX="720" :defaultY="200" @click="showSchedule = true" />
   </div>
   <div class="statusbar">
     <div>当前笔记本：{{ selectedFolderLabel }}</div>
@@ -51,15 +53,18 @@ import Editor from './components/Editor.vue'
 import AiModal from './components/AiModal.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import DraggableFloat from './components/DraggableFloat.vue'
-import { loadData, saveData, loadApiKey, saveApiKey, createNotebook, createNote, renameNode, setFolderCollapsed, findById, deleteNode } from './storage'
+import ScheduleModal from './components/ScheduleModal.vue'
+import { loadData, saveData, loadApiKey, saveApiKey, createNotebook, createNote, renameNode, setFolderCollapsed, findById, deleteNode, loadSchedules, saveSchedules, addScheduleItem, deleteScheduleItem } from './storage'
 
 const data = ref(loadData())
 const apiKey = ref(loadApiKey())
 const showAiModal = ref(false)
 const showSettings = ref(false)
+const showSchedule = ref(false)
 const sortBy = ref('updatedAt')
 const selectedFolderId = ref(null)
 const selectedNoteId = ref(null)
+const schedules = ref(loadSchedules())
 
 const tree = computed(() => data.value.notebookTree)
 
@@ -201,6 +206,17 @@ const onDeleteNote = id => {
   deleteNode(data.value, id)
   if (selectedNoteId.value === id) selectedNoteId.value = null
   saveData(data.value)
+}
+
+const onAddSchedule = payload => {
+  const item = addScheduleItem(payload.title, payload.datetime)
+  schedules.value.push(item)
+  saveSchedules(schedules.value)
+}
+
+const onDeleteSchedule = id => {
+  deleteScheduleItem(schedules.value, id)
+  saveSchedules(schedules.value)
 }
 </script>
 <style>
